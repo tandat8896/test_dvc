@@ -1,8 +1,8 @@
 {
-  "version": "latest",
-  "n_rows": 7,
-  "n_features": 3,
-  "rmse": 1.4286,
-  "mae": 1.1429,
-  "r2": 0.8571
+  "version": "v1",
+  "n_rows": 3,
+  "n_features": 2,
+  "rmse": 3.3333,
+  "mae": 2.6667,
+  "r2": 0.6667
 }
