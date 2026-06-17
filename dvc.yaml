@@ -11,5 +11,5 @@ stages:
           cache: false
     outs:
       - models/:
-          cache: true
+          cache: false
           persist: true

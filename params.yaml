@@ -1,1 +1,6 @@
-version: v1
+version: v3
+
+data_versions:
+  v1: "293cacb"
+  v2: "eaced40"
+  v3: "64110af"
