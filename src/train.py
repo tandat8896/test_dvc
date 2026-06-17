@@ -6,6 +6,8 @@ import os
 import dvc.api
 
 
+# ===== CODE MOI NHAT - cap nhat 17/06/2026 =====
+
 def train(version: str) -> dict:
     with dvc.api.open("data/raw/df_features.csv", rev=version, mode="r") as f:
         reader = csv.DictReader(f)
