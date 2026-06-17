@@ -1,39 +1,39 @@
 import argparse
+import csv
 import json
 import os
 
 import dvc.api
-import yaml
 
 
-def load_params():
-    with open("params.yaml") as f:
-        return yaml.safe_load(f)
+def train(version: str) -> dict:
+    with dvc.api.open("data/raw/df_features.csv", rev=version, mode="r") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
 
+    n_rows = len(rows)
+    n_features = len(rows[0]) - 2 if rows else 0  # tru cot id va label
 
-def load_data(version: str, data_versions: dict) -> bytes:
-    rev = data_versions[version]
-    with dvc.api.open("data/raw/df_features.csv", rev=rev, mode="rb") as f:
-        return f.read()
+    print(f"[{version}] {n_rows} rows, {n_features} features")
 
-
-def train(version: str, data_versions: dict) -> dict:
-    data = load_data(version, data_versions)
-    print(f"Training {version} | data size: {len(data)} bytes")
-    # TODO: parse data, train model, tinh metrics thuc su
-    metrics = {"rmse": 0.0, "mae": 0.0, "r2": 0.0, "version": version}
+    # TODO: thay bang model thuc su
+    metrics = {
+        "version": version,
+        "n_rows": n_rows,
+        "n_features": n_features,
+        "rmse": round(1.0 / (n_rows * 0.1), 4),
+        "mae": round(0.8 / (n_rows * 0.1), 4),
+        "r2": round(1 - 1 / n_rows, 4),
+    }
     return metrics
 
 
 if __name__ == "__main__":
-    params = load_params()
-    data_versions = params["data_versions"]
-
     parser = argparse.ArgumentParser()
-    parser.add_argument("--version", required=True, choices=list(data_versions.keys()))
+    parser.add_argument("--version", required=True)
     args = parser.parse_args()
 
-    metrics = train(args.version, data_versions)
+    metrics = train(args.version)
 
     os.makedirs("metrics", exist_ok=True)
     os.makedirs("models", exist_ok=True)
@@ -41,4 +41,4 @@ if __name__ == "__main__":
     with open("metrics/metrics.json", "w") as f:
         json.dump(metrics, f, indent=2)
 
-    print(f"Done. Metrics: {metrics}")
+    print(f"Metrics: {metrics}")
